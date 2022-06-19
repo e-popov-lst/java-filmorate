@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @Data
 public class Film {
 
+    private static long lastId = 0;
+
     @EqualsAndHashCode.Include
     private long id;
 
@@ -27,4 +29,8 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private int duration;
+
+    {
+        id = ++lastId;
+    }
 }

@@ -41,10 +41,15 @@ public class FilmController {
 
     @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) throws JsonProcessingException {
-        validate(film);
-        films.add(film);
-        log.debug("Change film: {}", mapper.writeValueAsString(film));
-        return film;
+        if (!films.contains(film)) {
+            throw new ValidationException("Фильм с id=" + film.getId() + " не найден.");
+        } else {
+            validate(film);
+            films.remove(film);
+            films.add(film);
+            log.debug("Change film: {}", mapper.writeValueAsString(film));
+            return film;
+        }
     }
 
     public static void validate(Film film){

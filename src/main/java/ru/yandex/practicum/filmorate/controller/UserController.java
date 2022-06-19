@@ -31,6 +31,9 @@ public class UserController {
         if (users.contains(user)) {
             throw new ValidationException("Пользователь с id=" + user.getId() + " уже зарегистрирован.");
         } else {
+            if (user.getName().isEmpty()) {
+                user.setName(user.getLogin());
+            }
             users.add(user);
             log.debug("Add user: {}", mapper.writeValueAsString(user));
             return user;
@@ -39,8 +42,13 @@ public class UserController {
 
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) throws JsonProcessingException {
-        users.add(user);
-        log.debug("Change user: {}", mapper.writeValueAsString(user));
-        return user;
+        if (!users.contains(user)) {
+            throw new ValidationException("Пользователь с id=" + user.getId() + " не найден.");
+        } else {
+            users.remove(user);
+            users.add(user);
+            log.debug("Change user: {}", mapper.writeValueAsString(user));
+            return user;
+        }
     }
 }

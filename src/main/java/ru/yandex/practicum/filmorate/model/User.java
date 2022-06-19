@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @Data
 public class User {
 
+    private static long lastId = 0;
+
     @EqualsAndHashCode.Include
     private long id;
 
@@ -31,4 +33,7 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
+    {
+        id = ++lastId;
+    }
 }

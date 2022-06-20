@@ -107,7 +107,7 @@ class FilmControllerTest {
                     }
                 });
 
-        assertTrue(exception.getMessage().contains("Дата релиза - не раньше 28 декабря 1895 года."));
+        assertTrue(exception.getMessage().contains("Дата релиза - не раньше 28 декабря 1895 г."));
     }
 
     @Test
@@ -203,7 +203,7 @@ class FilmControllerTest {
                     }
                 });
 
-        assertTrue(exception.getMessage().contains("Дата релиза - не раньше 28 декабря 1895 года."));
+        assertTrue(exception.getMessage().contains("Дата релиза - не раньше 28 декабря 1895 г."));
     }
 
     @Test

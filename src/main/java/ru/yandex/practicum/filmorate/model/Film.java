@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @Data
 public class Film {
 
+    public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     private static long lastId = 0;
 
     @EqualsAndHashCode.Include

@@ -8,9 +8,13 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
+
+import static ru.yandex.practicum.filmorate.model.Film.MIN_RELEASE_DATE;
 
 @RestController
 @Slf4j
@@ -52,9 +56,12 @@ public class FilmController {
         }
     }
 
-    public static void validate(Film film){
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза - не раньше 28 декабря 1895 года.");
+    private void validate(Film film) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+            throw new ValidationException("Дата релиза - не раньше " +
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+                            .withLocale(new Locale("ru"))
+                            .format(MIN_RELEASE_DATE));
         }
     }
 }

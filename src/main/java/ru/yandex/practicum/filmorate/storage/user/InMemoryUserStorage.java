@@ -1,10 +1,13 @@
-package ru.yandex.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -19,6 +22,11 @@ public class InMemoryUserStorage implements UserStorage {
             if (user.getName().isEmpty()) {
                 user.setName(user.getLogin());
             }
+
+            if (user.getId() == null) {
+                user.setId();
+            }
+
             users.add(user);
             return user;
         }
@@ -26,7 +34,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     public User update(User user) {
         if (!users.contains(user)) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " не найден.");
+            throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден для изменения.");
         } else {
             users.remove(user);
             users.add(user);
@@ -36,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     public void delete(User user) {
         if (!users.contains(user)) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " не найден для удаления.");
+            throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден для удаления.");
         } else {
             users.remove(user);
         }
@@ -44,5 +52,19 @@ public class InMemoryUserStorage implements UserStorage {
 
     public Set<User> findAll() {
         return users;
+    }
+
+    public User findUserById(long id) {
+        User user;
+
+        try {
+            user = users.stream().filter(data -> Objects.equals(data.getId(), id)).findFirst().get();
+        } catch (NoSuchElementException e) {
+            throw new NotFoundException("Пользователь с id=" + id + " не найден.");
+        }
+
+        if (user == null) throw new NotFoundException("Пользователь с id=" + id + " не найден.");
+
+        return user;
     }
 }

@@ -1,14 +1,14 @@
-package ru.yandex.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.model.Film.MIN_RELEASE_DATE;
 
@@ -22,6 +22,11 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("Фильм с id=" + film.getId() + " уже добавлен.");
         } else {
             validate(film);
+
+            if (film.getId() == null) {
+                film.setId();
+            }
+
             films.add(film);
             return film;
         }
@@ -29,7 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film update(Film film) {
         if (!films.contains(film)) {
-            throw new ValidationException("Фильм с id=" + film.getId() + " не найден.");
+            throw new NotFoundException("Фильм с id=" + film.getId() + " не найден для изменения.");
         } else {
             validate(film);
             films.remove(film);
@@ -40,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public void delete(Film film) {
         if (!films.contains(film)) {
-            throw new ValidationException("Фильм с id=" + film.getId() + " не найден для удаления.");
+            throw new NotFoundException("Фильм с id=" + film.getId() + " не найден для удаления.");
         } else {
             films.remove(film);
         }
@@ -48,6 +53,20 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Set<Film> findAll() {
         return films;
+    }
+
+    public Film findFilmById(long id) {
+        Film film;
+
+        try {
+            film = films.stream().filter(data -> Objects.equals(data.getId(), id)).findFirst().get();
+        } catch (NoSuchElementException e) {
+            throw new NotFoundException("Фильм с id=" + id + " не найден.");
+        }
+
+        if (film == null) throw new NotFoundException("Фильм с id=" + id + " не найден.");
+
+        return film;
     }
 
     private void validate(Film film) {
@@ -58,5 +77,4 @@ public class InMemoryFilmStorage implements FilmStorage {
                             .format(MIN_RELEASE_DATE));
         }
     }
-
 }

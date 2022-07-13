@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,6 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
@@ -18,7 +21,7 @@ public class Film {
     private static long lastId = 0;
 
     @EqualsAndHashCode.Include
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Название фильма не может быть пустым.")
     private String name;
@@ -32,7 +35,9 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private int duration;
 
-    {
+    private Set<Long> likesUserId = new HashSet<>();
+
+    public void setId() {
         id = ++lastId;
     }
 }

@@ -10,21 +10,48 @@ import java.util.*;
 
 @Service
 public class UserService {
-    InMemoryUserStorage userStorage;
+    private final InMemoryUserStorage userStorage;
+
 
     @Autowired
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public void addFriend(User user, User friend) {
-        user.getFriendsId().add(friend.getId());
-        friend.getFriendsId().add(user.getId());
+    public Set<User> findAll() {
+        return userStorage.findAll();
     }
 
-    public void removeFriend(User user, User friend) {
+    public User create(User user) {
+        return userStorage.create(user);
+    }
+
+    public User update(User user) {
+        return userStorage.update(user);
+    }
+
+    public User findUserById(long id) {
+        return userStorage.findUserById(id);
+    }
+
+    public User addFriend(long userId, long friendId) {
+        User user = userStorage.findUserById(userId);
+        User friend = userStorage.findUserById(friendId);
+
+        user.getFriendsId().add(friend.getId());
+        friend.getFriendsId().add(user.getId());
+
+        return user;
+    }
+
+    public User removeFriend(long userId, long friendId) {
+        User user = userStorage.findUserById(userId);
+        User friend = userStorage.findUserById(friendId);
+
         user.getFriendsId().remove(friend.getId());
         friend.getFriendsId().remove(user.getId());
+
+        return user;
     }
 
     public List<User> commonFriends(User user1, User user2) {

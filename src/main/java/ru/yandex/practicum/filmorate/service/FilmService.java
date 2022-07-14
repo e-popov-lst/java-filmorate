@@ -1,30 +1,58 @@
 package ru.yandex.practicum.filmorate.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
 @Service
 public class FilmService {
-    InMemoryFilmStorage filmStorage;
+    private final InMemoryFilmStorage filmStorage;
+    private final InMemoryUserStorage userStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage) {
+    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
-    public void addLike(Film film, User user) {
-        film.getLikesUserId().add(user.getId());
+    public Set<Film> findAll() {
+        return filmStorage.findAll();
     }
 
-    public void removeLike(Film film, User user) {
-        film.getLikesUserId().remove(user.getId());
+    public Film create(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film film) {
+        return filmStorage.update(film);
+    }
+
+    public Film findFilmById(long id) {
+        return filmStorage.findFilmById(id);
+    }
+
+    public Film addLike(long filmId, long userId) {
+        Film film = filmStorage.findFilmById(filmId);
+        userStorage.findUserById(userId);
+        film.getLikesUserId().add(userId);
+
+        return film;
+    }
+
+    public Film removeLike(long filmId, long userId) {
+        Film film = filmStorage.findFilmById(filmId);
+        userStorage.findUserById(userId);
+        film.getLikesUserId().remove(userId);
+
+        return film;
     }
 
     public List<Film> popularFilms(int count) {

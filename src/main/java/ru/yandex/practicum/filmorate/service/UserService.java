@@ -54,7 +54,7 @@ public class UserService {
         return user;
     }
 
-    public List<User> commonFriends(User user1, User user2) {
+    public List<User> getCommonFriends(User user1, User user2) {
         List<User> commonFriendsList = new ArrayList<>();
 
         if (user1.getFriendsId() != null) {
@@ -70,7 +70,7 @@ public class UserService {
         return commonFriendsList;
     }
 
-    public List<User> friends(User user) {
+    public List<User> getFriends(User user) {
         List<User> friendsList = new ArrayList<>();
         Set<Long> friendsId = user.getFriendsId();
 

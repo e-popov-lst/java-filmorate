@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -53,7 +52,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public List<Film> popularFilms(@RequestParam(defaultValue = "10") String count) {
-        return filmService.popularFilms(Integer.parseInt(count));
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
+        return filmService.getPopularFilms(Integer.parseInt(count));
     }
 }

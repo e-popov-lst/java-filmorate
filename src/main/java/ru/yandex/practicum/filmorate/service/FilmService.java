@@ -55,9 +55,8 @@ public class FilmService {
         return film;
     }
 
-    public List<Film> popularFilms(int count) {
+    public List<Film> getPopularFilms(int count) {
         return filmStorage.findAll().stream()
-                //.filter(f -> f.getLikesUserId().size() > 0)
                 .sorted((f0, f1) -> compare(f0, f1))
                 .limit(count)
                 .collect(Collectors.toList());

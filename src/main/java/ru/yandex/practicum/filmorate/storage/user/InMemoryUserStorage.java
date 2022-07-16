@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
             }
 
             users.add(user);
-            log.debug("Add user: {}", user.toString());
+            log.debug("Add user: {}", user);
 
             return user;
         }
@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.remove(user);
 
             users.add(user);
-            log.debug("Change user: {}", user.toString());
+            log.debug("Change user: {}", user);
 
             return user;
         }

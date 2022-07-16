@@ -32,7 +32,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             }
 
             films.add(film);
-            log.debug("Add film: {}", film.toString());
+            log.debug("Add film: {}", film);
 
             return film;
         }
@@ -46,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.remove(film);
 
             films.add(film);
-            log.debug("Add film: {}", film.toString());
+            log.debug("Change film: {}", film);
 
             return film;
         }

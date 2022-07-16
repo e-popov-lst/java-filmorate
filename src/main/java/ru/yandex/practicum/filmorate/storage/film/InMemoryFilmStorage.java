@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,13 +19,9 @@ import static ru.yandex.practicum.filmorate.model.Film.MIN_RELEASE_DATE;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final ObjectMapper mapper =
-            new ObjectMapper().registerModule(new JavaTimeModule())
-                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
     private final Set<Film> films = new HashSet<>();
 
-    public Film create(Film film){
+    public Film create(Film film) {
         if (films.contains(film)) {
             throw new ValidationException("Фильм с id=" + film.getId() + " уже добавлен.");
         } else {
@@ -37,11 +32,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             }
 
             films.add(film);
-            try {
-                log.debug("Add film: {}", mapper.writeValueAsString(film));
-            } catch(JsonProcessingException e) {
-                log.debug("Add film: {}", "ошибка логирования фильма " + film.getId());
-            }
+            log.debug("Add film: {}", film.toString());
 
             return film;
         }
@@ -55,11 +46,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.remove(film);
 
             films.add(film);
-            try {
-                log.debug("Add film: {}", mapper.writeValueAsString(film));
-            } catch(JsonProcessingException e) {
-                log.debug("Change film: {}", "ошибка логирования фильма " + film.getId());
-            }
+            log.debug("Add film: {}", film.toString());
+
             return film;
         }
     }

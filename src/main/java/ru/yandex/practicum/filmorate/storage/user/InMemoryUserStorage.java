@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -19,10 +18,6 @@ import java.util.Set;
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final ObjectMapper mapper =
-            new ObjectMapper().registerModule(new JavaTimeModule())
-                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
     private final Set<User> users = new HashSet<>();
 
     public User create(User user) {
@@ -38,11 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
             }
 
             users.add(user);
-            try {
-                log.debug("Add user: {}", mapper.writeValueAsString(user));
-            } catch (JsonProcessingException e) {
-                log.debug("Add film: {}", "ошибка логирования пользователя " + user.getId());
-            }
+            log.debug("Add user: {}", user.toString());
 
             return user;
         }
@@ -53,12 +44,9 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден для изменения.");
         } else {
             users.remove(user);
+
             users.add(user);
-            try {
-                log.debug("Change user: {}", mapper.writeValueAsString(user));
-            } catch (JsonProcessingException e) {
-                log.debug("Change film: {}", "ошибка логирования пользователя " + user.getId());
-            }
+            log.debug("Change user: {}", user.toString());
 
             return user;
         }

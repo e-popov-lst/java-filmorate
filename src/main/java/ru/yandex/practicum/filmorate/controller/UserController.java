@@ -1,54 +1,60 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
-@Slf4j
 public class UserController {
-    private final Set<User> users = new HashSet<>();
-    private final ObjectMapper mapper;
+    private final UserService userService;
 
-    public UserController(ObjectMapper mapper) {
-        this.mapper = mapper;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/users")
     public Set<User> findAll() {
-        return users;
+        return userService.findAll();
     }
 
     @PostMapping(value = "/users")
-    public User create(@Valid @RequestBody User user) throws JsonProcessingException {
-        if (users.contains(user)) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " уже зарегистрирован.");
-        } else {
-            if (user.getName().isEmpty()) {
-                user.setName(user.getLogin());
-            }
-            users.add(user);
-            log.debug("Add user: {}", mapper.writeValueAsString(user));
-            return user;
-        }
+    public User create(@Valid @RequestBody User user) {
+        return userService.create(user);
     }
 
     @PutMapping(value = "/users")
-    public User update(@Valid @RequestBody User user) throws JsonProcessingException {
-        if (!users.contains(user)) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " не найден.");
-        } else {
-            users.remove(user);
-            users.add(user);
-            log.debug("Change user: {}", mapper.writeValueAsString(user));
-            return user;
-        }
+    public User update(@Valid @RequestBody User user) {
+        return userService.update(user);
+    }
+
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable String id) {
+        return userService.findUserById(Long.parseLong(id));
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable String id, @PathVariable String friendId) {
+        return userService.addFriend(Long.parseLong(id), Long.parseLong(friendId));
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public User removeFriend(@PathVariable String id, @PathVariable String friendId) {
+        return userService.removeFriend(Long.parseLong(id), Long.parseLong(friendId));
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<User> getFriends(@PathVariable String id) {
+        return userService.getFriends(userService.findUserById(Long.parseLong(id)));
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable String id, @PathVariable String otherId) {
+        return userService.getCommonFriends(userService.findUserById(Long.parseLong(id)), userService.findUserById(Long.parseLong(otherId)));
     }
 }

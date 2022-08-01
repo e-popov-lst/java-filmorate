@@ -1,26 +1,32 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(UserController.class)
+@SpringBootTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserControllerTest {
+    @MockBean
+    private UserService userService;
 
     @Autowired
     private MockMvc mvc;
+
 
     @Test
     @Order(1)
@@ -51,7 +57,7 @@ class UserControllerTest {
     void create() throws Exception {
         String json = "{\"id\": 1,\"email\": \"123@test.com\",\"login\": \"t123\",\"name\": \"John\",\"birthday\": \"2004-05-22\"}";
 
-        MvcResult result = mvc.perform(
+        mvc.perform(
                 post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -198,3 +204,4 @@ class UserControllerTest {
                 .andReturn();
     }
 }
+

@@ -25,11 +25,13 @@ public class UserController {
 
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) {
+        if (user.getName().isBlank()) user.setName(user.getLogin());
         return userService.create(user);
     }
 
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
+        if (user.getName().isBlank()) user.setName(user.getLogin());
         return userService.update(user);
     }
 

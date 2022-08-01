@@ -24,8 +24,8 @@ public class FilmorateApplication {
 Пример получения списка друзей :
 ```sql
 SELECT u.name
-FROM friend f
-INNER JOIN user u ON u.user_id = CASE
+FROM friends f
+INNER JOIN users u ON u.user_id = CASE
                                      WHEN f.initiator = :userId THEN f.candidate
                                      ELSE f.initiator
                                  END

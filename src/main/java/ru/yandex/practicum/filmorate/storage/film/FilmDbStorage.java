@@ -41,7 +41,9 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getId() != null && isExistsFilm(film.getId())) {
             throw new ValidationException("Фильм с id=" + film.getId() + " уже добавлен.");
         } else {
-            String sql = "INSERT INTO film(name, description, release_date, duration, rate, rating_id) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO film(name, description, release_date, duration, rate, rating_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbcTemplate.update(connection -> {
@@ -76,7 +78,9 @@ public class FilmDbStorage implements FilmStorage {
         if (!isExistsFilm(film.getId())) {
             throw new NotFoundException("Фильм с id=" + film.getId() + " не найден для изменения.");
         } else {
-            String sql = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rate = ?, rating_id = ? WHERE film_id = ?";
+            String sql = "UPDATE film " +
+                    "SET name = ?, description = ?, release_date = ?, duration = ?, rate = ?, rating_id = ? " +
+                    "WHERE film_id = ?";
 
             jdbcTemplate.update(sql,
                     film.getName(),

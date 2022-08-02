@@ -27,7 +27,7 @@ public interface FilmStorage {
 
     Rating findRatingById(long id);
 
-    public List<Rating> findAllRatings();
+    List<Rating> findAllRatings();
 
     Genre findGenreById(long id);
 

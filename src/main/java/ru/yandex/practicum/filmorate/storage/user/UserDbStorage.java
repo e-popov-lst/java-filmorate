@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
@@ -33,49 +32,41 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        if (user.getId() != null && isExistsUser(user.getId())) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " уже зарегистрирован.");
-        } else {
-            String sql = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
-            KeyHolder keyHolder = new GeneratedKeyHolder();
+        String sql = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, new String[]{"user_id"});
-                ps.setString(1, user.getEmail());
-                ps.setString(2, user.getLogin());
-                ps.setString(3, user.getName());
-                ps.setDate(4, Date.valueOf(user.getBirthday()));
-                return ps;
-            }, keyHolder);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"user_id"});
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getLogin());
+            ps.setString(3, user.getName());
+            ps.setDate(4, Date.valueOf(user.getBirthday()));
+            return ps;
+        }, keyHolder);
 
-            long userId = (long) keyHolder.getKey();
+        long userId = (long) keyHolder.getKey();
 
-            User newUser = findUserById(userId);
-            log.debug("Add user: {}", newUser);
+        User newUser = findUserById(userId);
+        log.debug("Add user: {}", newUser);
 
-            return newUser;
-        }
+        return newUser;
     }
 
     @Override
     public User update(User user) {
-        if (!isExistsUser(user.getId())) {
-            throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден для изменения.");
-        } else {
-            String sql = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
 
-            jdbcTemplate.update(sql,
-                    user.getEmail(),
-                    user.getLogin(),
-                    user.getName(),
-                    Date.valueOf(user.getBirthday()),
-                    user.getId());
+        jdbcTemplate.update(sql,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                Date.valueOf(user.getBirthday()),
+                user.getId());
 
-            User newUser = findUserById(user.getId());
-            log.debug("Change user: {}", newUser);
+        User newUser = findUserById(user.getId());
+        log.debug("Change user: {}", newUser);
 
-            return newUser;
-        }
+        return newUser;
     }
 
     @Override
@@ -129,7 +120,8 @@ public class UserDbStorage implements UserStorage {
         if (!isExistsUser(userId))
             throw new NotFoundException("Пользователь с id=" + userId + " не найден для добавления друга.");
         if (!isExistsUser(friendId))
-            throw new NotFoundException("Пользователь с id=" + friendId + " не найден для добавления в качестве друга.");
+            throw new NotFoundException("Пользователь с id=" + friendId +
+                    " не найден для добавления в качестве друга.");
 
         String sql = "INSERT INTO friends(initiator, candidate, is_confirmed) " +
                 "SELECT ?, ?, TRUE  " +
@@ -164,9 +156,11 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getCommonFriends(User user1, User user2) {
         if (!isExistsUser(user1.getId()))
-            throw new NotFoundException("Пользователь с id=" + user1.getId() + " не найден для поиска общих друзей со вторым пользователем.");
+            throw new NotFoundException("Пользователь с id=" + user1.getId() +
+                    " не найден для поиска общих друзей со вторым пользователем.");
         if (!isExistsUser(user2.getId()))
-            throw new NotFoundException("Пользователь с id=" + user2.getId() + " не найден для поиска общих друзей с первым пользователем.");
+            throw new NotFoundException("Пользователь с id=" + user2.getId() +
+                    " не найден для поиска общих друзей с первым пользователем.");
 
         String sql = "SELECT u.user_id," +
                 "       max(u.email) as email," +
@@ -224,6 +218,7 @@ public class UserDbStorage implements UserStorage {
         return commonFriendsList;
     }
 
+    @Override
     public boolean isExistsUser(long userId) {
         String sql = "SELECT 1 FROM users u WHERE user_id = ?";
         return jdbcTemplate.queryForList(sql, userId).size() > 0;

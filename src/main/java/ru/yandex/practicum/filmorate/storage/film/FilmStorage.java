@@ -32,4 +32,6 @@ public interface FilmStorage {
     Genre findGenreById(long id);
 
     List<Genre> findAllGenres();
+
+    boolean isExistsFilm(long filmId);
 }

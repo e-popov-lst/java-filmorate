@@ -26,15 +26,44 @@ class FilmServiceTest {
     @Test
     @Order(1)
     void findAll() throws Exception {
-        filmService.create(new Film(101L, "Test film", "Описание", LocalDate.of(2004, 05, 21), 90, 1, null, null, filmService.findRatingById(1L)));
-        filmService.create(new Film(102L, "Test film2", "Описание2", LocalDate.of(2004, 05, 22), 90, 2, null, null, filmService.findRatingById(2L)));
+        filmService.create(
+                new Film(101L,
+                        "Test film",
+                        "Описание",
+                        LocalDate.of(2004, 05, 21),
+                        90,
+                        1,
+                        null,
+                        null,
+                        filmService.findRatingById(1L)));
+
+        filmService.create(
+                new Film(102L,
+                        "Test film2",
+                        "Описание2",
+                        LocalDate.of(2004, 05, 22),
+                        90,
+                        2,
+                        null,
+                        null,
+                        filmService.findRatingById(2L)));
 
         assertTrue(filmService.findAll().size() >= 2);
     }
 
     @Test
     void create() throws Exception {
-        Film film = filmService.create(new Film(101L, "Test film3", "Описание", LocalDate.of(2004, 05, 21), 90, 1, null, null, filmService.findRatingById(1L)));
+        Film film = filmService.create(
+                new Film(101L,
+                        "Test film3",
+                        "Описание",
+                        LocalDate.of(2004, 05, 21),
+                        90,
+                        1,
+                        null,
+                        null,
+                        filmService.findRatingById(1L)));
+
         Film film2 = filmService.findFilmById(film.getId());
 
         assertEquals("Test film3", film2.getName());
@@ -42,10 +71,28 @@ class FilmServiceTest {
 
     @Test
     void update() throws Exception {
-        Film film = filmService.create(new Film(104L, "Test film4", "Описание4", LocalDate.of(2004, 05, 24), 90, 4, null, null, filmService.findRatingById(1L)));
-        Film film2 = filmService.update(new Film(film.getId(), "Test film5", "Описание4", LocalDate.of(2004, 05, 24), 90, 4, null, null, filmService.findRatingById(1L)));
+        Film film = filmService.create(
+                new Film(104L,
+                        "Test film4",
+                        "Описание4",
+                        LocalDate.of(2004, 05, 24),
+                        90,
+                        4,
+                        null,
+                        null,
+                        filmService.findRatingById(1L)));
+
+        Film film2 = filmService.update(
+                new Film(film.getId(),
+                        "Test film5",
+                        "Описание4",
+                        LocalDate.of(2004, 05, 24),
+                        90,
+                        4,
+                        null,
+                        null,
+                        filmService.findRatingById(1L)));
 
         assertEquals("Test film5", film2.getName());
     }
 }
-

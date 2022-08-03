@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -16,22 +15,18 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        if (users.contains(user)) {
-            throw new ValidationException("Пользователь с id=" + user.getId() + " уже зарегистрирован.");
-        } else {
-            if (user.getName().isEmpty()) {
-                user.setName(user.getLogin());
-            }
-
-            if (user.getId() == null) {
-                user.setId();
-            }
-
-            users.add(user);
-            log.debug("Add user: {}", user);
-
-            return user;
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
         }
+
+        if (user.getId() == null) {
+            user.setId();
+        }
+
+        users.add(user);
+        log.debug("Add user: {}", user);
+
+        return user;
     }
 
     @Override
@@ -127,5 +122,15 @@ public class InMemoryUserStorage implements UserStorage {
         }
 
         return friendsList;
+    }
+
+    @Override
+    public boolean isExistsUser(long userId) {
+        try {
+            users.stream().filter(data -> Objects.equals(data.getId(), userId)).findFirst().get();
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 }

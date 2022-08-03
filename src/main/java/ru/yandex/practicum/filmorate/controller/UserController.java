@@ -25,11 +25,13 @@ public class UserController {
 
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) {
+        if (user.getName().isBlank()) user.setName(user.getLogin());
         return userService.create(user);
     }
 
     @PutMapping(value = "/users")
     public User update(@Valid @RequestBody User user) {
+        if (user.getName().isBlank()) user.setName(user.getLogin());
         return userService.update(user);
     }
 
@@ -55,6 +57,7 @@ public class UserController {
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable String id, @PathVariable String otherId) {
-        return userService.getCommonFriends(userService.findUserById(Long.parseLong(id)), userService.findUserById(Long.parseLong(otherId)));
+        return userService.getCommonFriends(userService.findUserById(Long.parseLong(id)),
+                userService.findUserById(Long.parseLong(otherId)));
     }
 }

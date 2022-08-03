@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,11 +10,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
+
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
+@AllArgsConstructor
 public class Film {
 
     public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
@@ -35,7 +37,14 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной.")
     private int duration;
 
-    private Set<Long> likesUserId = new HashSet<>();
+    private int rate;
+
+    private Set<Long> likesUserId;
+
+    private Set<Genre> genres;
+
+    @JsonProperty("mpa")
+    private Rating ratingMPA;
 
     public void setId() {
         id = ++lastId;

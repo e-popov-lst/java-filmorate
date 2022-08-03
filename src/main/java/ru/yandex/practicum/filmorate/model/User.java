@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,11 +11,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
+
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
+@AllArgsConstructor
 public class User {
     private static long lastId = 0;
 
@@ -36,7 +38,8 @@ public class User {
     private LocalDate birthday;
 
     @JsonProperty("friendsId")
-    private Set<Long> friendsId = new HashSet<>();
+    private Set<Long> friendsId;
+
 
     public void setId() {
         id = ++lastId;

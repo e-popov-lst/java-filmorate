@@ -6,37 +6,54 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.NestedServletException;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(FilmController.class)
 class FilmControllerTest {
 
+    @MockBean
+    private FilmService filmService;
+
     @Autowired
     private MockMvc mvc;
+
 
     @Test
     @Order(1)
     void findAll() throws Exception {
 
-        String json = "{\"id\":101,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":101," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andReturn();
 
-        json = "{\"id\":102,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        json = "{\"id\":102," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +70,11 @@ class FilmControllerTest {
 
     @Test
     void create() throws Exception {
-        String json = "{\"id\":1,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":1," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
 
         mvc.perform(
                 post("/films")
@@ -66,7 +87,12 @@ class FilmControllerTest {
 
     @Test
     void createFailByName() throws Exception {
-        String json = "{\"id\":10,\"name\":\"\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":10," +
+                "\"name\":\"\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +103,12 @@ class FilmControllerTest {
 
     @Test
     void createFailByDescription() throws Exception {
-        String json = "{\"id\":10,\"name\":\"Test film\",\"description\":\"Описание" + "1234567890".repeat(20) + "\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":10," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание" + "1234567890".repeat(20) + "\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +119,11 @@ class FilmControllerTest {
 
     @Test
     void createFailByReleaseDate() throws Exception {
-        final String json = "{\"id\":10,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"1894-05-22\",\"duration\":90}";
+        final String json = "{\"id\":10," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"1894-05-22\"," +
+                "\"duration\":90}";
 
         final NestedServletException exception = assertThrows(
                 // класс ошибки
@@ -112,7 +147,12 @@ class FilmControllerTest {
 
     @Test
     void createFailByDuration() throws Exception {
-        String json = "{\"id\":10,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2005-05-22\",\"duration\":-90}";
+        String json = "{\"id\":10," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2005-05-22\"," +
+                "\"duration\":-90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,14 +163,24 @@ class FilmControllerTest {
 
     @Test
     void update() throws Exception {
-        String json = "{\"id\":201,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":201," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andReturn();
 
-        json = "{\"id\":201,\"name\":\"Test film777\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        json = "{\"id\":201," +
+                "\"name\":\"Test film777\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 put("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,14 +192,24 @@ class FilmControllerTest {
 
     @Test
     void updateFailByName() throws Exception {
-        String json = "{\"id\":301,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":301," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andReturn();
 
-        json = "{\"id\":301,\"name\":\"\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        json = "{\"id\":301," +
+                "\"name\":\"\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 put("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -160,14 +220,24 @@ class FilmControllerTest {
 
     @Test
     void updateFailByDescription() throws Exception {
-        String json = "{\"id\":401,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":401," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andReturn();
 
-        json = "{\"id\":10,\"name\":\"Test film\",\"description\":\"Описание" + "1234567890".repeat(20) + "\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        json = "{\"id\":10," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание" + "1234567890".repeat(20) + "\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 put("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -178,7 +248,12 @@ class FilmControllerTest {
 
     @Test
     void updateFailByReleaseDate() throws Exception {
-        String json = "{\"id\":501,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":501," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -193,7 +268,12 @@ class FilmControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws Exception {
-                        String json = "{\"id\":501,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"1894-05-22\",\"duration\":90}";
+                        String json = "{\"id\":501," +
+                                "\"name\":\"Test film\"," +
+                                "\"description\":\"Описание\"," +
+                                "\"releaseDate\":\"1894-05-22\"," +
+                                "\"duration\":90}";
+
                         mvc.perform(
                                 put("/films")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -208,14 +288,24 @@ class FilmControllerTest {
 
     @Test
     void updateFailByDuration() throws Exception {
-        String json = "{\"id\":601,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":90}";
+        String json = "{\"id\":601," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":90}";
+
         mvc.perform(
                 post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andReturn();
 
-        json = "{\"id\":601,\"name\":\"Test film\",\"description\":\"Описание\",\"releaseDate\":\"2004-05-22\",\"duration\":-90}";
+        json = "{\"id\":601," +
+                "\"name\":\"Test film\"," +
+                "\"description\":\"Описание\"," +
+                "\"releaseDate\":\"2004-05-22\"," +
+                "\"duration\":-90}";
+
         mvc.perform(
                 put("/films")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -223,5 +313,4 @@ class FilmControllerTest {
                 .andExpect(status().is(400))
                 .andReturn();
     }
-
 }

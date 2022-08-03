@@ -1,20 +1,24 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 
 @Service
 public class UserService {
-    private final InMemoryUserStorage userStorage;
+    public final UserStorage userStorage;
 
 
     @Autowired
-    public UserService(InMemoryUserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -23,10 +27,18 @@ public class UserService {
     }
 
     public User create(User user) {
+        if (user.getId() != null && userStorage.isExistsUser(user.getId())) {
+            throw new ValidationException("Пользователь с id=" + user.getId() + " уже зарегистрирован.");
+        }
+
         return userStorage.create(user);
     }
 
     public User update(User user) {
+        if (!userStorage.isExistsUser(user.getId())) {
+            throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден для изменения.");
+        }
+
         return userStorage.update(user);
     }
 
@@ -35,50 +47,18 @@ public class UserService {
     }
 
     public User addFriend(long userId, long friendId) {
-        User user = userStorage.findUserById(userId);
-        User friend = userStorage.findUserById(friendId);
-
-        user.getFriendsId().add(friend.getId());
-        friend.getFriendsId().add(user.getId());
-
-        return user;
+        return userStorage.addFriend(userId, friendId);
     }
 
     public User removeFriend(long userId, long friendId) {
-        User user = userStorage.findUserById(userId);
-        User friend = userStorage.findUserById(friendId);
-
-        user.getFriendsId().remove(friend.getId());
-        friend.getFriendsId().remove(user.getId());
-
-        return user;
+        return userStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getCommonFriends(User user1, User user2) {
-        List<User> commonFriendsList = new ArrayList<>();
-
-        if (user1.getFriendsId() != null) {
-            Set<Long> intersection = new HashSet<>(user1.getFriendsId());
-            intersection.retainAll(user2.getFriendsId());
-
-            Iterator<Long> iterator = intersection.iterator();
-            while (iterator.hasNext()) {
-                commonFriendsList.add(userStorage.findUserById(iterator.next()));
-            }
-        }
-
-        return commonFriendsList;
+        return userStorage.getCommonFriends(user1, user2);
     }
 
     public List<User> getFriends(User user) {
-        List<User> friendsList = new ArrayList<>();
-        Set<Long> friendsId = user.getFriendsId();
-
-        Iterator<Long> iterator = friendsId.iterator();
-        while (iterator.hasNext()) {
-            friendsList.add(userStorage.findUserById(iterator.next()));
-        }
-
-        return friendsList;
+        return userStorage.getFriends(user);
     }
 }

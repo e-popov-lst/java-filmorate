@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -26,14 +28,12 @@ public class FilmController {
 
     @PostMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film) {
-        filmService.create(film);
-        return film;
+        return filmService.create(film);
     }
 
     @PutMapping(value = "/films")
     public Film update(@Valid @RequestBody Film film) {
-        filmService.update(film);
-        return film;
+        return filmService.update(film);
     }
 
     @GetMapping(value = "/films/{id}")
@@ -54,5 +54,25 @@ public class FilmController {
     @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
         return filmService.getPopularFilms(Integer.parseInt(count));
+    }
+
+    @GetMapping(value = "/genres")
+    public List<Genre> findAllGenres() {
+        return filmService.findAllGenres();
+    }
+
+    @GetMapping(value = "/genres/{id}")
+    public Genre getGenre(@PathVariable String id) {
+        return filmService.findGenreById(Long.parseLong(id));
+    }
+
+    @GetMapping(value = "/mpa")
+    public List<Rating> findAllRatings() {
+        return filmService.findAllRatings();
+    }
+
+    @GetMapping(value = "/mpa/{id}")
+    public Rating getRating(@PathVariable String id) {
+        return filmService.findRatingById(Long.parseLong(id));
     }
 }
